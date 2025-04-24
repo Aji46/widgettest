@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:test_widget/audio/presentation/post.dart';
+import 'package:test_widget/audio/presentation/view_audio/view.dart';
 
 void main() => runApp(const MyApp());
 
@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
       //  BlocProvider<AudioExplorerCubit>(
       //   create: (_) => AudioExplorerCubit(getFoldersUseCase: null, getSubFoldersUseCase: null, getFilesUseCase: null),
       //   
-         AudioUploadPage(),
+        const FileExploreScreen(),
       // ),
     );
   }
@@ -23,7 +23,8 @@ class MyApp extends StatelessWidget {
 
 
 // class Home extends StatefulWidget {
-//   const Home({super.key});
+
+//   const Home({super.key, required String musicFile});
 
 //   @override
 //   State<Home> createState() => _HomeState();
@@ -33,7 +34,6 @@ class MyApp extends StatelessWidget {
 //   late final RecorderController recorderController;
 
 //   String? path;
-//   String? musicFile;
 //   bool isRecording = false;
 //   bool isRecordingCompleted = false;
 //   bool isLoading = true;
@@ -42,6 +42,7 @@ class MyApp extends StatelessWidget {
 //   @override
 //   void initState() {
 //     super.initState();
+    
 //     _getDir();
 //     _initialiseControllers();
 //   }
@@ -61,15 +62,6 @@ class MyApp extends StatelessWidget {
 //       ..sampleRate = 44100;
 //   }
 
-//   void _pickFile() async {
-//     FilePickerResult? result = await FilePicker.platform.pickFiles();
-//     if (result != null) {
-//       musicFile = result.files.single.path;
-//       setState(() {});
-//     } else {
-//       debugPrint("File not picked");
-//     }
-//   }
 
 //   @override
 //   void dispose() {
@@ -80,7 +72,7 @@ class MyApp extends StatelessWidget {
 //   @override
 //   Widget build(BuildContext context) {
 //     return Scaffold(
-//       backgroundColor: const Color(0xFF252331),
+//       backgroundColor: const Color.fromARGB(255, 255, 255, 255),
      
 //       body: isLoading
 //           ? const Center(child: CircularProgressIndicator())
@@ -108,11 +100,11 @@ class MyApp extends StatelessWidget {
 //                               ? AudioWaveforms(
 //                                   enableGesture: true,
 //                                   size: Size(
-//                                       MediaQuery.of(context).size.width / 2,
+//                                       MediaQuery.of(context).size.width / 6,
 //                                       50),
 //                                   recorderController: recorderController,
 //                                   waveStyle: const WaveStyle(
-//                                     waveColor: Colors.white,
+//                                     waveColor: Color.fromARGB(255, 255, 4, 4),
 //                                     extendWaveform: true,
 //                                     showMiddleLine: false,
 //                                   ),
@@ -123,50 +115,12 @@ class MyApp extends StatelessWidget {
 //                                   padding: const EdgeInsets.only(left: 18),
 //                                   margin: const EdgeInsets.symmetric(
 //                                       horizontal: 15),
-//                                 )
-//                               : Container(
-//                                   width:
-//                                       MediaQuery.of(context).size.width / 1.7,
-//                                   height: 50,
-//                                   decoration: BoxDecoration(
-//                                     color: const Color(0xFF1E1B26),
-//                                     borderRadius: BorderRadius.circular(12.0),
-//                                   ),
-//                                   padding: const EdgeInsets.only(left: 18),
-//                                   margin: const EdgeInsets.symmetric(
-//                                       horizontal: 15),
-//                                   child: TextField(
-//                                     readOnly: true,
-//                                     decoration: InputDecoration(
-//                                       hintText: "Type Something...",
-//                                       hintStyle: const TextStyle(
-//                                           color: Colors.white54),
-//                                       contentPadding:
-//                                           const EdgeInsets.only(top: 16),
-//                                       border: InputBorder.none,
-//                                       suffixIcon: IconButton(
-//                                         onPressed: _pickFile,
-//                                         icon: Icon(Icons.adaptive.share),
-//                                         color: Colors.white54,
-//                                       ),
-//                                     ),
-//                                   ),
-//                                 ),
+//                                 ):SizedBox(),
+                          
 //                         ),
-//                         IconButton(
-//                           onPressed: _refreshWave,
-//                           icon: Icon(
-//                             isRecording ? Icons.refresh : Icons.send,
-//                             color: Colors.white,
-//                           ),
-//                         ),
+                    
 //                         const SizedBox(width: 16),
-//                         IconButton(
-//                           onPressed: _startOrStopRecording,
-//                           icon: Icon(isRecording ? Icons.stop : Icons.mic),
-//                           color: Colors.white,
-//                           iconSize: 28,
-//                         ),
+                    
 //                       ],
 //                     ),
 //                   ),
@@ -263,14 +217,11 @@ class MyApp extends StatelessWidget {
 //   @override
 //   Widget build(BuildContext context) {
 //     return Align(
-//       alignment: widget.isSender ? Alignment.centerRight : Alignment.centerLeft,
+//       alignment: widget.isSender ? Alignment.topCenter : Alignment.center,
 //       child: Container(
 //         margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
 //         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-//         decoration: BoxDecoration(
-//           color: widget.isSender ? Colors.blue : Colors.grey[800],
-//           borderRadius: BorderRadius.circular(20),
-//         ),
+       
 //         child: Row(
 //           mainAxisSize: MainAxisSize.min,
 //           children: [
@@ -278,7 +229,7 @@ class MyApp extends StatelessWidget {
 //               onPressed: _togglePlayPause,
 //               icon: Icon(
 //                 _isPlaying ? Icons.pause : Icons.play_arrow,
-//                 color: Colors.white,
+//                 color: const Color.fromARGB(255, 0, 0, 0),
 //               ),
 //             ),
 //             AudioFileWaveforms(
@@ -287,8 +238,8 @@ class MyApp extends StatelessWidget {
 //               enableSeekGesture: true,
 //               waveformType: WaveformType.long,
 //               playerWaveStyle: const PlayerWaveStyle(
-//                 fixedWaveColor: Colors.white,
-//                 liveWaveColor: Colors.red,
+//                 fixedWaveColor: Color.fromARGB(255, 0, 0, 0),
+//                 liveWaveColor: Color.fromARGB(255, 0, 0, 0),
 //                 showSeekLine: true,
 //               ),
 //             ),

@@ -14,11 +14,6 @@ class AudioMessageBubble extends StatelessWidget {
   Widget build(BuildContext context) {
     return Align(
       child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-        ),
         child: SizedBox(
           width: MediaQuery.of(context).size.width * 0.6,
           child: AudioFileWaveforms(

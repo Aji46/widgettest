@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:test_widget/audio/presentation/view_model/components/network_wave.dart';
+import 'package:test_widget/audio/presentation/view_audio/audio_list_page.dart';
 
 class AudioInfo extends StatelessWidget {
   final String fileName;
@@ -15,12 +15,29 @@ class AudioInfo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+      title:Text(fileName),
+      backgroundColor: Color(0xFF87EDED),
+     actions: [
+  IconButton(
+    onPressed: () {},
+    icon: Icon(Icons.close_sharp),
+  ),
+],
+
+      ),
       body: SafeArea(
         child: Column(
           children: [
-            Text(fileName),
+           
             SizedBox(height: 10),
-            AudioMessageBubble(path: 'assets/ll.mp3'),
+            
+            // Home(musicFile: file),
+            AudioWaveformWidget(
+  audioFilePath: file, 
+),
+
+
             Text(transcriptText),
           ],
         ),

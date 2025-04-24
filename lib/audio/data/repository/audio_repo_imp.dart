@@ -53,21 +53,20 @@ import 'package:test_widget/core/network/api_endpoints/audio_endpoint.dart';
 import 'package:test_widget/core/network/service/api_service.dart';
 
 class AudioRepositoryImpl implements AudioRepository {
- final IApiService _apiService;
+  final IApiService _apiService;
 
-  AudioRepositoryImpl(Set<dynamic> set, {required IApiService apiService}) : _apiService = apiService;
+  AudioRepositoryImpl({required IApiService apiService}) : _apiService = apiService;
 
   static const baseUrl = 'https://your-api-url.com/api';
 
   /// Fetches all root-level audio folders and their nested content
   @override
   Future<List<AudioEntity>> getAudioFolders() async {
-    final response = await _apiService.get(AudioEndpoints.completedFiles);
+    final response = await _apiService.get(AudioEndpoints.getallAudio);
 
-    if (response.success) {
+   if (response.success) {
       final List<dynamic> data = json.decode(response.data);
       return data.map((e) => AudioEntity.fromJson(e)).toList();
-      
     } else {
       throw Exception('Failed to load audio folders');
     }
@@ -75,27 +74,27 @@ class AudioRepositoryImpl implements AudioRepository {
 
   /// Fetches subfolder and files for a given folder name
   @override
-  Future<List<SubFolderEntity>> getSubFoldersByFolderName() async {
-    final response = await _apiService.get(AudioEndpoints.filestructure);
+  Future<List<SubFolderEntity>> getSubFoldersByFolderName(String folderName) async {
+    final response = await _apiService.get(AudioEndpoints.getallAudio);
 
    if (response.success) {
       final List<dynamic> data = json.decode(response.data);
       return data.map((e) => SubFolderEntity.fromJson(e)).toList();
     } else {
-      throw Exception('Failed to load subfolders for folder:');
+      throw Exception('Failed to load subfolders for folder: $folderName');
     }
   }
 
   /// Fetches audio files inside a given subfolder
   @override
-  Future<List<AudioFileEntity>> getAudioFilesBySubFolder() async {
-   final response = await _apiService.get(AudioEndpoints.getallAudio);
+  Future<List<AudioFileEntity>> getAudioFilesBySubFolder(String folderName, String subFolderName) async {
+    final response = await _apiService.get(AudioEndpoints.getallAudio);
 
-   if (response.success) {
+  if (response.success) {
       final List<dynamic> data = json.decode(response.data);
       return data.map((e) => AudioFileEntity.fromJson(e)).toList();
     } else {
-      throw Exception('Failed to load audio files for subfolder: ');
+      throw Exception('Failed to load audio files for subfolder: $subFolderName');
     }
   }
 }

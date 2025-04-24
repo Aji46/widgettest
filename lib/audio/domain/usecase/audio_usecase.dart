@@ -21,10 +21,12 @@
 //   }
 // }
 
+
 import 'package:test_widget/audio/data/entity/audio_entity.dart';
 import 'package:test_widget/audio/data/entity/audio_file_entity.dart';
 import 'package:test_widget/audio/data/entity/sub_folder_entity.dart';
 import 'package:test_widget/audio/domain/repository/audio_repository.dart';
+
 
 class GetAudioFoldersUseCase {
   final AudioRepository repository;
@@ -42,7 +44,7 @@ class GetSubFoldersUseCase {
   GetSubFoldersUseCase(this.repository);
 
   Future<List<SubFolderEntity>> call(String folderName) async {
-    return await repository.getSubFoldersByFolderName();
+    return await repository.getSubFoldersByFolderName(folderName);
   }
 }
 
@@ -51,10 +53,7 @@ class GetAudioFilesUseCase {
 
   GetAudioFilesUseCase(this.repository);
 
-  Future<List<AudioFileEntity>> call(
-    String folderName,
-    String subFolderName,
-  ) async {
-    return await repository.getAudioFilesBySubFolder();
+  Future<List<AudioFileEntity>> call(String folderName, String subFolderName) async {
+    return await repository.getAudioFilesBySubFolder(folderName, subFolderName);
   }
 }

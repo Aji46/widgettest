@@ -14,6 +14,6 @@ import 'package:test_widget/audio/data/entity/sub_folder_entity.dart';
 
 abstract class AudioRepository {
   Future<List<AudioEntity>> getAudioFolders();
-  Future<List<SubFolderEntity>> getSubFoldersByFolderName();
-  Future<List<AudioFileEntity>> getAudioFilesBySubFolder();
+  Future<List<SubFolderEntity>> getSubFoldersByFolderName(String folderName);
+  Future<List<AudioFileEntity>> getAudioFilesBySubFolder(String folderName, String subFolderName);
 }
