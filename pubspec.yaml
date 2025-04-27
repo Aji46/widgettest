@@ -48,6 +48,17 @@ dependencies:
   audioplayers: ^6.4.0
   simple_waveform_progressbar: ^0.0.3
   fftea: ^1.5.0+1
+  flutter_audio_waveforms: ^1.2.1+8
+  waveform_recorder: ^1.7.0
+  platform_helper: ^0.1.0
+  gap: ^3.0.1
+  platform: ^3.1.6
+  helpers: ^1.2.3
+  waveform_fft: ^0.0.3
+  permission_handler: ^12.0.0+1
+  flutter_waveform: ^0.0.1
+  ffmpeg_kit_flutter_new: ^1.1.0
+
   
 
 dev_dependencies:
