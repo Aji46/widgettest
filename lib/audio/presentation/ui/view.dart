@@ -1,3 +1,5 @@
+
+
 import 'package:flutter/material.dart';
 import 'package:test_widget/audio/data/entity/audio_file_entity.dart';
 import 'package:test_widget/audio/data/entity/sub_folder_entity.dart';
@@ -15,6 +17,8 @@ class _FileExploreScreenState extends State<FileExploreScreen> {
   bool loadingAudio = false;
   List<SubFolderEntity> subFolders = [];
   List<AudioFileEntity> audioFiles = [];
+
+    String? expandedFolder;
 
   @override
   void initState() {
@@ -70,16 +74,32 @@ class _FileExploreScreenState extends State<FileExploreScreen> {
                 ),
                 const SizedBox(height: 30),
                 GestureDetector(
-                  onTap: fetchSubFolders,
-                  child: Row(
-                    children: const [
-                      Icon(Icons.folder, color: Colors.amber),
-                      SizedBox(width: 8),
-                      Text("Audio", style: TextStyle(fontSize: 16)),
-                    ],
-                  ),
+                  onTap:() {
+                      setState(() {
+                        if (expandedFolder == "Audio") {
+                          expandedFolder = null;
+                          audioFiles.clear();
+                        } else {
+                          expandedFolder = "Audio";
+                          fetchSubFolders();
+                        }
+                      });
+                    },
+                    child: Row(
+                      children: [
+                        Icon(
+                          expandedFolder == "Audio"
+                              ? Icons.folder_open
+                              : Icons.folder,
+                          color: Colors.amber,
+                        ),
+                        const SizedBox(width: 8),
+                        const Text("Audio", style: TextStyle(fontSize: 16)),
+                      ],
+                    ),
                 ),
                 const SizedBox(height: 15),
+                 if (expandedFolder == "Audio")
                 ...subFolders.map(
                   (subFolder) => GestureDetector(
                     onTap:
@@ -176,15 +196,18 @@ class _FileExploreScreenState extends State<FileExploreScreen> {
                                             ),
                                           ),
                                           const SizedBox(height: 8),
-                                          Text(
-                                            audio.transcription.isNotEmpty
-                                                ? audio.transcription
-                                                : "No transcription available",
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              color: Colors.grey[700],
-                                            ),
-                                          ),
+                                        Text(
+  audio.transcription.isNotEmpty
+      ? audio.transcription
+      : "No transcription available",
+  style: TextStyle(
+    fontSize: 14,
+    color: Colors.grey[700],
+  ),
+  maxLines: 2,  // Limit text to two lines
+  overflow: TextOverflow.ellipsis,  // Add ellipsis at the end if the text overflows
+)
+
                                         ],
                                       ),
                                     ),

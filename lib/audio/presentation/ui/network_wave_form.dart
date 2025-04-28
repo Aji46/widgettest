@@ -5,6 +5,8 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:test_widget/audio/data/entity/tanscriptionSegment.dart';
+import 'package:test_widget/audio/presentation/ui/apicalss.dart';
 
 import 'widgets/painter.dart';
 
@@ -21,6 +23,7 @@ class WavedAudioPlayer extends StatefulWidget {
   bool showTiming;
   TextStyle? timingStyle;
   void Function(WavedAudioPlayerError)? onError;
+    final Function(String)? onTranscriptionReceived; 
 
   WavedAudioPlayer({
     super.key,
@@ -35,6 +38,7 @@ class WavedAudioPlayer extends StatefulWidget {
     this.showTiming = true,
     this.timingStyle,
     this.onError,
+     this.onTranscriptionReceived, 
     this.waveHeight = 35,
   });
 
@@ -50,14 +54,17 @@ class _WavedAudioPlayerState extends State<WavedAudioPlayer> {
   bool isPlaying = false;
   bool isPausing = true;
   Uint8List? _audioBytes;
-  double waveWidth = 0; // <-- we will dynamically assign this
+  double waveWidth = 0; 
 
   @override
-  void initState() {
-    super.initState();
-    _setupAudioPlayer();
-    _loadWaveform();
-  }
+ @override
+void initState() {
+  super.initState();
+  _setupAudioPlayer();
+  _loadWaveform();
+  _playAudio();
+}
+
 
   Future<void> _loadWaveform() async {
     try {
@@ -162,13 +169,100 @@ List<double> _extractWaveformData(Uint8List audioBytes) {
   return waveData;
 }
 
+String _highlightedTranscription = "";
+String _fullTranscription = ""; 
 
-  void _onWaveformTap(double tapX) {
-    if (waveWidth == 0) return;
-    double tapPercent = tapX / waveWidth;
-    Duration newPosition = audioDuration * tapPercent;
-    _audioPlayer.seek(newPosition);
+void _onWaveformTap(double tapX) async {
+  if (waveWidth == 0) return;
+
+
+  double tapPercent = tapX / waveWidth;
+  Duration newPosition = audioDuration * tapPercent;
+
+
+  _audioPlayer.seek(newPosition);
+
+
+  try {
+
+    AudioTranscription transcription = await getAudioTranscriptionByGuidDemo("fguid");
+    print("Transcription received: ${transcription.transcription}");
+
+
+    _fullTranscription = transcription.transcription;
+
+
+    String matchedText = _findMatchedTranscription(newPosition, transcription.srtSegments);
+
+
+    print("Matched Transcription: $matchedText");
+
+
+    String highlightedTranscription = _highlightTranscriptionWord(matchedText, _fullTranscription, newPosition);
+    print("Highlighted Transcription: $highlightedTranscription");
+
+
+    if (widget.onTranscriptionReceived != null) {
+      widget.onTranscriptionReceived!(highlightedTranscription);
+    }
+
+
+    setState(() {
+      _highlightedTranscription = highlightedTranscription;
+    });
+
+  } catch (e) {
+    _callOnError(WavedAudioPlayerError("Failed to fetch transcription: $e"));
   }
+}
+
+String _findMatchedTranscription(Duration position, List<TranscriptionSegment> segments) {
+  for (var segment in segments) {
+    Duration start = _parseDuration(segment.startTime);
+    Duration end = _parseDuration(segment.endTime);
+
+
+    if (position >= start && position <= end) {
+      return segment.transcriptText;
+    }
+  }
+  return "No transcription found for this position.";
+}
+
+
+Duration _parseDuration(String timeStr) {
+  List<String> parts = timeStr.split(':');
+  int hours = int.parse(parts[0]);
+  int minutes = int.parse(parts[1]);
+  double seconds = double.parse(parts[2]);
+
+  return Duration(
+    hours: hours,
+    minutes: minutes,
+    seconds: seconds.toInt(),
+    milliseconds: (seconds * 1000).toInt() % 1000,
+  );
+}
+
+
+String _highlightTranscriptionWord(String matchedText, String fullTranscription, Duration position) {
+  List<String> words = fullTranscription.split(' ');
+
+  // Use the position to select the word based on the current playback time
+  int wordIndex = (position.inSeconds % words.length); 
+  String highlightedWord = words[wordIndex];
+
+  // Replace the word with a highlighted version, adding HTML-like styling for larger size and bold
+  String highlightedTranscription = fullTranscription.replaceFirst(
+    highlightedWord,
+    '**$highlightedWord**', // Markdown bold
+  );
+
+  return highlightedTranscription; // Return modified string or you can use this TextSpan for rendering
+}
+
+
+
 
   void _playAudio() async {
     if (_audioBytes == null) return;
