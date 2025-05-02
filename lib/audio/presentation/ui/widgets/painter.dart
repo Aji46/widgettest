@@ -1,50 +1,17 @@
-// import 'package:flutter/material.dart';
-
-// class WaveformPainter extends CustomPainter {
-//   final List<double> waveform;
-//   final double progress; // Value from 0 to 1
-//   final Color playedColor;
-//   final Color unplayedColor;
-//   final double barWidth;
-
-//   WaveformPainter(
-//     this.waveform,
-//     this.progress, {
-//     required this.playedColor,
-//     required this.unplayedColor,
-//     required this.barWidth,
-//   });
-
-//   @override
-//   void paint(Canvas canvas, Size size) {
-//     final Paint playedPaint = Paint()..color = playedColor;
-//     final Paint unplayedPaint = Paint()..color = unplayedColor;
-
-//     double barSpacing = barWidth;
-//     for (int i = 0; i < waveform.length; i++) {
-//       double x = i * (barWidth + barSpacing);
-//       double height = waveform[i] * size.height;
-//       double y = (size.height - height) / 2;
-
-//       final paint = i / waveform.length < progress ? playedPaint : unplayedPaint;
-//       canvas.drawRect(Rect.fromLTWH(x, y, barWidth, height), paint);
-//     }
-//   }
-
-//   @override
-//   bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
-// }
-
 
 import 'package:flutter/material.dart';
+import 'package:test_widget/audio/data/entity/tanscriptionSegment.dart';
 
 class WaveformPainter extends CustomPainter {
   final List<double> waveformData;
-  final double progress;
+  final double progress; // Value from 0 to 1
   final Color playedColor;
   final Color unplayedColor;
   final double barWidth;
   final double waveWidth;
+  final List<TranscriptionSegment> transcriptionSegments;
+  final Duration audioDuration;
+  final TranscriptionSegment? selectedSegment; // New: track the selected segment
 
   WaveformPainter({
     required this.waveformData,
@@ -53,38 +20,129 @@ class WaveformPainter extends CustomPainter {
     required this.unplayedColor,
     required this.barWidth,
     required this.waveWidth,
+    required this.transcriptionSegments,
+    required this.audioDuration,
+    this.selectedSegment, // New: optional parameter for the selected segment
   });
 
   @override
   void paint(Canvas canvas, Size size) {
     final Paint playedPaint = Paint()..color = playedColor;
     final Paint unplayedPaint = Paint()..color = unplayedColor;
+    final Paint greenLinePaint = Paint()..color = Colors.green..strokeWidth = 3;
+    final Paint segmentHighlightPaint = Paint()
+      ..color = const Color.fromARGB(255, 255, 59, 59).withOpacity(0.3) // Light yellow with transparency
+      ..style = PaintingStyle.fill;
+         double greenLineHeight = size.height * 2;
 
-    double totalBars = waveformData.length.toDouble();
- double barSpacing = totalBars > 1
-    ? (waveWidth - (barWidth * totalBars)) / (totalBars - 1)
-    : 0;
+    // Only highlight the selected segment if there is one
+    if (selectedSegment != null) {
+      Duration start = _parseDuration(selectedSegment!.startTime);
+      Duration end = _parseDuration(selectedSegment!.endTime);
 
-    double centerY = size.height / 2;
+      double startPosition = (start.inMilliseconds / audioDuration.inMilliseconds) * waveWidth;
+      double endPosition = (end.inMilliseconds / audioDuration.inMilliseconds) * waveWidth;
 
+      // Draw yellow highlight rectangle for the selected segment area
+      canvas.drawRect(
+        Rect.fromLTWH(startPosition, size.height - greenLineHeight, endPosition - startPosition, greenLineHeight+35),
+        segmentHighlightPaint,
+      );
+    }
+
+    // Draw waveform
+    double barSpacing = 4;  // Adjust if needed
     for (int i = 0; i < waveformData.length; i++) {
-      double x = (barWidth + barSpacing) * i;
-      double halfHeight = (size.height * waveformData[i]) / 2;
+      double x = i * (barWidth + barSpacing);
+      double height = waveformData[i] * size.height;
+      double y = (size.height - height) / 2;
 
-      Rect barRect = Rect.fromLTRB(
-        x,
-        centerY - halfHeight,
-        x + barWidth,
-        centerY + halfHeight,
+      final paint = i / waveformData.length < progress ? playedPaint : unplayedPaint;
+      canvas.drawRect(Rect.fromLTWH(x, y, barWidth, height), paint);
+    }
+
+    // Draw green lines for transcription segments and show start and end times at the bottom
+    TextPainter textPainter = TextPainter(
+      textAlign: TextAlign.center,
+      textDirection: TextDirection.ltr,
+    );
+
+    TextStyle textStyle = TextStyle(
+      color: Colors.green,
+      fontSize: 12,
+      fontWeight: FontWeight.bold,
+    );
+
+    for (var segment in transcriptionSegments) {
+      Duration start = _parseDuration(segment.startTime);
+      Duration end = _parseDuration(segment.endTime);
+
+      double startPosition = (start.inMilliseconds / audioDuration.inMilliseconds) * waveWidth;
+      double endPosition = (end.inMilliseconds / audioDuration.inMilliseconds) * waveWidth;
+
+      // Draw green lines at the start and end times of the segment
+     // Increased height of green lines
+      canvas.drawLine(
+        Offset(startPosition, 0),
+        Offset(startPosition, size.height - greenLineHeight), 
+        greenLinePaint
       );
 
-      final paint = i / totalBars < progress ? playedPaint : unplayedPaint;
-      canvas.drawRect(barRect, paint);
+      canvas.drawLine(
+        Offset(endPosition, 0),
+        Offset(endPosition, greenLineHeight), 
+        greenLinePaint
+      );
+
+      // Draw the start time text at the bottom of the green line
+      textPainter.text = TextSpan(
+        text: _formatDuration(start),
+        style: textStyle,
+      );
+      textPainter.layout();
+      textPainter.paint(canvas, Offset(startPosition - textPainter.width / 2, greenLineHeight));
+
+      // Draw the end time text at the bottom of the green line
+      textPainter.text = TextSpan(
+        text: _formatDuration(end),
+        style: textStyle,
+      );
+      textPainter.layout();
+      textPainter.paint(canvas, Offset(endPosition - textPainter.width / 2, greenLineHeight));
     }
   }
 
   @override
-  bool shouldRepaint(CustomPainter oldDelegate) {
-    return true;
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
+
+  // Helper method to parse the transcription segment time into Duration
+  Duration _parseDuration(String timeStr) {
+    List<String> parts = timeStr.split(':');
+    int hours = int.parse(parts[0]);
+    int minutes = int.parse(parts[1]);
+    double seconds = double.parse(parts[2]);
+
+    return Duration(
+      hours: hours,
+      minutes: minutes,
+      seconds: seconds.toInt(),
+      milliseconds: (seconds * 1000).toInt() % 1000,
+    );
+  }
+
+  // Helper method to format Duration into a readable string (hh:mm:ss)
+  String _formatDuration(Duration duration) {
+    int seconds = duration.inSeconds;
+    int minutes = seconds ~/ 60;
+    seconds = seconds % 60;
+    int hours = minutes ~/ 60;
+    minutes = minutes % 60;
+
+    return '${_twoDigitFormat(hours)}:${_twoDigitFormat(minutes)}:${_twoDigitFormat(seconds)}';
+  }
+
+  // Helper method to format numbers with two digits
+  String _twoDigitFormat(int number) {
+    return number.toString().padLeft(2, '0');
   }
 }

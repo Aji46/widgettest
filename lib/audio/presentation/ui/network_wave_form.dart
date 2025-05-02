@@ -1,3 +1,4 @@
+
 import 'dart:io';
 import 'dart:math';
 
@@ -23,7 +24,7 @@ class WavedAudioPlayer extends StatefulWidget {
   bool showTiming;
   TextStyle? timingStyle;
   void Function(WavedAudioPlayerError)? onError;
-    final Function(String)? onTranscriptionReceived; 
+  final Function(String)? onTranscriptionReceived; 
 
   WavedAudioPlayer({
     super.key,
@@ -38,7 +39,7 @@ class WavedAudioPlayer extends StatefulWidget {
     this.showTiming = true,
     this.timingStyle,
     this.onError,
-     this.onTranscriptionReceived, 
+    this.onTranscriptionReceived, 
     this.waveHeight = 35,
   });
 
@@ -56,15 +57,21 @@ class _WavedAudioPlayerState extends State<WavedAudioPlayer> {
   Uint8List? _audioBytes;
   double waveWidth = 0; 
 
-  @override
- @override
-void initState() {
-  super.initState();
-  _setupAudioPlayer();
-  _loadWaveform();
-  _playAudio();
-}
+  List<TranscriptionSegment> transcriptionSegments = []; // Store transcription segments
+  TranscriptionSegment? selectedSegment; // Track the selected segment
 
+  String _highlightedTranscription = "";
+  String _fullTranscription = ""; 
+
+  @override
+  void initState() {
+    super.initState();
+    _setupAudioPlayer();
+    _loadWaveform();
+    _playAudio();
+    // Fetch transcription when initialized
+    _fetchTranscription();
+  }
 
   Future<void> _loadWaveform() async {
     try {
@@ -155,121 +162,179 @@ void initState() {
         currentPosition = position;
         isPausing = true;
       });
+      
+      // Check if position is in a different segment
+      _checkCurrentSegment(position);
     });
   }
 
-List<double> _extractWaveformData(Uint8List audioBytes) {
+  void _checkCurrentSegment(Duration position) {
+    // Check which segment the current position is in
+    for (var segment in transcriptionSegments) {
+      Duration start = _parseDuration(segment.startTime);
+      Duration end = _parseDuration(segment.endTime);
 
-  List<double> waveData = [];
-  int steps = (audioBytes.length / (waveWidth  / (widget.barWidth + widget.spacing))).floor();
-  for (int i = 0; i < audioBytes.length; i += steps) {
-    waveData.add(audioBytes[i] / 100);
-  }
-  waveData.add(audioBytes[audioBytes.length - 1] / 255);
-  return waveData;
-}
-
-String _highlightedTranscription = "";
-String _fullTranscription = ""; 
-
-void _onWaveformTap(double tapX) async {
-  if (waveWidth == 0) return;
-
-
-  double tapPercent = tapX / waveWidth;
-  Duration newPosition = audioDuration * tapPercent;
-
-
-  _audioPlayer.seek(newPosition);
-
-
-  try {
-
-    AudioTranscription transcription = await getAudioTranscriptionByGuidDemo("fguid");
-    print("Transcription received: ${transcription.transcription}");
-
-
-    _fullTranscription = transcription.transcription;
-
-
-    String matchedText = _findMatchedTranscription(newPosition, transcription.srtSegments);
-
-
-    print("Matched Transcription: $matchedText");
-
-
-    String highlightedTranscription = _highlightTranscriptionWord(matchedText, _fullTranscription, newPosition);
-    print("Highlighted Transcription: $highlightedTranscription");
-
-
-    if (widget.onTranscriptionReceived != null) {
-      widget.onTranscriptionReceived!(highlightedTranscription);
+      if (position >= start && position <= end) {
+        // Only update if this is a new segment
+        if (selectedSegment != segment) {
+          setState(() {
+            selectedSegment = segment;
+            
+            // Update the transcription text
+            String matchedText = segment.transcriptText;
+            String highlightedTranscription = _highlightTranscriptionSentence(matchedText, _fullTranscription);
+            
+            if (widget.onTranscriptionReceived != null) {
+              widget.onTranscriptionReceived!(highlightedTranscription);
+            }
+            
+            _highlightedTranscription = highlightedTranscription;
+          });
+        }
+        return;
+      }
     }
+    
+    // If we get here, we're not in any segment
+    if (selectedSegment != null) {
+      setState(() {
+        selectedSegment = null;
+      });
+    }
+  }
 
+  List<double> _extractWaveformData(Uint8List audioBytes) {
+    List<double> waveData = [];
+    int steps = (audioBytes.length / (waveWidth / (widget.barWidth + widget.spacing))).floor();
+    for (int i = 0; i < audioBytes.length; i += steps) {
+      waveData.add(audioBytes[i] / 100);
+    }
+    waveData.add(audioBytes[audioBytes.length - 1] / 255);
+    return waveData;
+  }
 
+  Future<void> _fetchTranscription() async {
+    try {
+      // Assume getAudioTranscriptionByGuidDemo() fetches the transcription
+      AudioTranscription transcription = await getAudioTranscriptionByGuidDemo("fguid");
+      transcriptionSegments = transcription.srtSegments;
+      _fullTranscription = transcription.transcription;
+      setState(() {}); // Update UI after fetching transcription
+    } catch (e) {
+      _callOnError(WavedAudioPlayerError("Failed to fetch transcription: $e"));
+    }
+  }
+
+  void _onWaveformTap(double tapX) async {
+    if (waveWidth == 0) return;
+
+    double tapPercent = tapX / waveWidth;
+    Duration newPosition = audioDuration * tapPercent;
+
+    // Seek to the tapped position
+    _audioPlayer.seek(newPosition);
+
+    // Find the segment that contains this position
+    TranscriptionSegment? tappedSegment = _findSegmentAtPosition(newPosition);
+    
     setState(() {
-      _highlightedTranscription = highlightedTranscription;
+      selectedSegment = tappedSegment;
     });
 
-  } catch (e) {
-    _callOnError(WavedAudioPlayerError("Failed to fetch transcription: $e"));
-  }
-}
-
-String _findMatchedTranscription(Duration position, List<TranscriptionSegment> segments) {
-  for (var segment in segments) {
-    Duration start = _parseDuration(segment.startTime);
-    Duration end = _parseDuration(segment.endTime);
-
-
-    if (position >= start && position <= end) {
-      return segment.transcriptText;
+    // Update transcription highlight if we found a segment
+    if (tappedSegment != null) {
+      String matchedText = tappedSegment.transcriptText;
+      String highlightedTranscription = _highlightTranscriptionSentence(matchedText, _fullTranscription);
+      
+      if (widget.onTranscriptionReceived != null) {
+        widget.onTranscriptionReceived!(highlightedTranscription);
+      }
+      
+      setState(() {
+        _highlightedTranscription = highlightedTranscription;
+      });
     }
   }
-  return "No transcription found for this position.";
-}
 
+  TranscriptionSegment? _findSegmentAtPosition(Duration position) {
+    for (var segment in transcriptionSegments) {
+      Duration start = _parseDuration(segment.startTime);
+      Duration end = _parseDuration(segment.endTime);
 
-Duration _parseDuration(String timeStr) {
-  List<String> parts = timeStr.split(':');
-  int hours = int.parse(parts[0]);
-  int minutes = int.parse(parts[1]);
-  double seconds = double.parse(parts[2]);
-
-  return Duration(
-    hours: hours,
-    minutes: minutes,
-    seconds: seconds.toInt(),
-    milliseconds: (seconds * 1000).toInt() % 1000,
-  );
-}
-
-
-String _highlightTranscriptionWord(String matchedText, String fullTranscription, Duration position) {
-  List<String> words = fullTranscription.split(' ');
-
-  // Use the position to select the word based on the current playback time
-  int wordIndex = (position.inSeconds % words.length); 
-  String highlightedWord = words[wordIndex];
-
-  // Replace the word with a highlighted version, adding HTML-like styling for larger size and bold
-  String highlightedTranscription = fullTranscription.replaceFirst(
-    highlightedWord,
-    '**$highlightedWord**', // Markdown bold
-  );
-
-  return highlightedTranscription; // Return modified string or you can use this TextSpan for rendering
-}
-
-
-
-
-  void _playAudio() async {
-    if (_audioBytes == null) return;
-    isPausing
-        ? _audioPlayer.resume()
-        : _audioPlayer.play(BytesSource(_audioBytes!, mimeType: widget.source.mimeType));
+      if (position >= start && position <= end) {
+        return segment;
+      }
+    }
+    return null;
   }
+
+  String _findMatchedTranscription(Duration position, List<TranscriptionSegment> segments) {
+    for (var segment in segments) {
+      Duration start = _parseDuration(segment.startTime);
+      Duration end = _parseDuration(segment.endTime);
+
+      if (position >= start && position <= end) {
+        return segment.transcriptText;
+      }
+    }
+    return "No transcription found for this position.";
+  }
+
+  Duration _parseDuration(String timeStr) {
+    List<String> parts = timeStr.split(':');
+    int hours = int.parse(parts[0]);
+    int minutes = int.parse(parts[1]);
+    double seconds = double.parse(parts[2]);
+
+    return Duration(
+      hours: hours,
+      minutes: minutes,
+      seconds: seconds.toInt(),
+      milliseconds: (seconds * 1000).toInt() % 1000,
+    );
+  }
+
+  String _highlightTranscriptionSentence(String matchedSentence, String fullTranscription) {
+    if (!fullTranscription.contains(matchedSentence)) return fullTranscription;
+
+
+  String styledSentence = '<span style="color: blue; font-weight: bold; font-size: 1.2em;">$matchedSentence</span>';
+    // Add ** around the full matched sentence to "highlight" it
+    return fullTranscription.replaceFirst(
+      matchedSentence,
+      '**$matchedSentence**',
+    );
+
+  }
+
+
+
+
+
+  // void _playAudio() async {
+  //   if (_audioBytes == null) return;
+  //   isPausing
+  //       ? _audioPlayer.resume()
+  //       : _audioPlayer.play(BytesSource(_audioBytes!, mimeType: widget.source.mimeType));
+  // }
+
+  
+  void _playAudio() async {
+  try {
+    if (_audioBytes != null) {
+      await _audioPlayer.setSource(BytesSource(_audioBytes!));
+      await _audioPlayer.resume();
+    } else {
+      await _loadWaveform(); // Ensure waveform and audio bytes are loaded
+      if (_audioBytes != null) {
+        await _audioPlayer.setSource(BytesSource(_audioBytes!));
+        await _audioPlayer.resume();
+      }
+    }
+  } catch (e) {
+    _callOnError(WavedAudioPlayerError("Error playing audio: $e"));
+  }
+}
 
   void _pauseAudio() async {
     _audioPlayer.pause();
@@ -294,48 +359,48 @@ String _highlightTranscriptionWord(String matchedText, String fullTranscription,
   }
 
   @override
-@override
-Widget build(BuildContext context) {
-  waveWidth = MediaQuery.of(context).size.width; // <- take full width here
+  Widget build(BuildContext context) {
+    waveWidth = MediaQuery.of(context).size.width;
 
-  return (waveformData.isNotEmpty)
-      ? GestureDetector(
-          onTapDown: (TapDownDetails details) {
-            _onWaveformTap(details.localPosition.dx);
-          },
-          child: CustomPaint(
-            size: Size(waveWidth, widget.waveHeight),
-            painter: WaveformPainter(
+    return (waveformData.isNotEmpty)
+        ? GestureDetector(
+            onTapDown: (TapDownDetails details) {
+              _onWaveformTap(details.localPosition.dx);
+            },
+            child: CustomPaint(
+              size: Size(waveWidth, widget.waveHeight),
+              painter: WaveformPainter(
                 waveformData: waveformData,
-             progress: currentPosition.inMilliseconds /
-                  (audioDuration.inMilliseconds == 0
-                      ? 1
-                      : audioDuration.inMilliseconds),
-              playedColor: widget.playedColor,
-              unplayedColor: widget.unplayedColor,
-              barWidth: widget.barWidth,
-              waveWidth: waveWidth, // Pass the waveWidth to the painter
+                progress: currentPosition.inMilliseconds /
+                    (audioDuration.inMilliseconds == 0 ? 1 : audioDuration.inMilliseconds),
+                playedColor: widget.playedColor,
+                unplayedColor: widget.unplayedColor,
+                barWidth: widget.barWidth,
+                waveWidth: waveWidth,
+                transcriptionSegments: transcriptionSegments,
+                audioDuration: audioDuration,
+                selectedSegment: selectedSegment,
+              ),
             ),
-          ),
-        )
-      : SizedBox(
-          width: waveWidth,  // Ensure the progress indicator width matches the waveWidth
-          height: max(widget.waveHeight, widget.buttonSize),
-          child: Center(
-            child: LinearProgressIndicator(
-              color: widget.playedColor,
-              borderRadius: BorderRadius.circular(40),
-              value: (audioDuration.inMilliseconds == 0)
-      ? 0
-      : currentPosition.inMilliseconds / audioDuration.inMilliseconds,
-),
-          ),
-        );
-}
-
+          )
+        : SizedBox(
+            width: waveWidth,
+            height: max(widget.waveHeight, widget.buttonSize),
+            child: Center(
+              child: LinearProgressIndicator(
+                color: widget.playedColor,
+                borderRadius: BorderRadius.circular(40),
+                value: (audioDuration.inMilliseconds == 0)
+                    ? 0
+                    : currentPosition.inMilliseconds / audioDuration.inMilliseconds,
+              ),
+            ),
+          );
+  }
 }
 
 class WavedAudioPlayerError {
   final String message;
   WavedAudioPlayerError(this.message);
 }
+
