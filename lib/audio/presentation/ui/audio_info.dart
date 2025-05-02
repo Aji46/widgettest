@@ -19,12 +19,7 @@ class _AudioInfoState extends State<AudioInfo> {
   String _fullTranscription = "";
   String _matchedSentence = "";
 
-  // Callback to update transcription
   void _updateTranscription(String highlightedTranscription) {
-    // Extract the matched sentence from the highlighted text
-    // Assuming the format is '**matched sentence**'
-
-
 final regex = RegExp(r'\*\*(.+?)\*\*');
 
     final match = regex.firstMatch(highlightedTranscription);

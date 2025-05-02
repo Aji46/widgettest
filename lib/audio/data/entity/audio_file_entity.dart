@@ -1,3 +1,5 @@
+import 'package:test_widget/audio/data/entity/tanscriptionSegment.dart';
+
 class AudioFileEntity {
   final String guid;
   final String fileName;
@@ -6,6 +8,7 @@ class AudioFileEntity {
   final String transcription;
   final String folderPath;
   final String? type;
+  final AudioTranscription? audioTranscription; // audioTranscription is nullable
 
   AudioFileEntity({
     required this.guid,
@@ -14,6 +17,7 @@ class AudioFileEntity {
     required this.convertedAt,
     required this.transcription,
     required this.folderPath,
+    this.audioTranscription, // audioTranscription is optional
     this.type,
   });
 
@@ -26,6 +30,22 @@ class AudioFileEntity {
       transcription: json['transcription'],
       folderPath: json['folderPath'],
       type: json['type'],
+      audioTranscription: json['audioTranscription'] != null
+          ? AudioTranscription.fromJson(json['audioTranscription'])
+          : null, // Handle null case for audioTranscription
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'guid': guid,
+      'fileName': fileName,
+      'receivedAt': receivedAt.toIso8601String(),
+      'convertedAt': convertedAt.toIso8601String(),
+      'transcription': transcription,
+      'folderPath': folderPath,
+      'type': type,
+      'audioTranscription': audioTranscription?.toJson(), // Handle nullable audioTranscription
+    };
   }
 }

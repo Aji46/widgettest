@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:test_widget/audio/data/entity/audio_file_entity.dart';
 import 'package:test_widget/audio/data/entity/sub_folder_entity.dart';
@@ -18,7 +16,7 @@ class _FileExploreScreenState extends State<FileExploreScreen> {
   List<SubFolderEntity> subFolders = [];
   List<AudioFileEntity> audioFiles = [];
 
-    String? expandedFolder;
+  String? expandedFolder;
 
   @override
   void initState() {
@@ -74,51 +72,51 @@ class _FileExploreScreenState extends State<FileExploreScreen> {
                 ),
                 const SizedBox(height: 30),
                 GestureDetector(
-                  onTap:() {
-                      setState(() {
-                        if (expandedFolder == "Audio") {
-                          expandedFolder = null;
-                          audioFiles.clear();
-                        } else {
-                          expandedFolder = "Audio";
-                          fetchSubFolders();
-                        }
-                      });
-                    },
-                    child: Row(
-                      children: [
-                        Icon(
-                          expandedFolder == "Audio"
-                              ? Icons.folder_open
-                              : Icons.folder,
-                          color: Colors.amber,
-                        ),
-                        const SizedBox(width: 8),
-                        const Text("Audio", style: TextStyle(fontSize: 16)),
-                      ],
-                    ),
+                  onTap: () {
+                    setState(() {
+                      if (expandedFolder == "Audio") {
+                        expandedFolder = null;
+                        audioFiles.clear();
+                      } else {
+                        expandedFolder = "Audio";
+                        fetchSubFolders();
+                      }
+                    });
+                  },
+                  child: Row(
+                    children: [
+                      Icon(
+                        expandedFolder == "Audio"
+                            ? Icons.folder_open
+                            : Icons.folder,
+                        color: Colors.amber,
+                      ),
+                      const SizedBox(width: 8),
+                      const Text("Audio", style: TextStyle(fontSize: 16)),
+                    ],
+                  ),
                 ),
                 const SizedBox(height: 15),
-                 if (expandedFolder == "Audio")
-                ...subFolders.map(
-                  (subFolder) => GestureDetector(
-                    onTap:
-                        fetchAudioFiles, // Ideally should pass subfolder info if needed
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 30.0, bottom: 10),
-                      child: Row(
-                        children: [
-                          const Icon(Icons.folder, color: Colors.amber),
-                          const SizedBox(width: 8),
-                          Text(
-                            subFolder.name,
-                            style: const TextStyle(fontSize: 16),
-                          ),
-                        ],
+                if (expandedFolder == "Audio")
+                  ...subFolders.map(
+                    (subFolder) => GestureDetector(
+                      onTap:
+                          fetchAudioFiles, // Ideally should pass subfolder info if needed
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 30.0, bottom: 10),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.folder, color: Colors.amber),
+                            const SizedBox(width: 8),
+                            Text(
+                              subFolder.name,
+                              style: const TextStyle(fontSize: 16),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
               ],
             ),
           ),
@@ -149,7 +147,8 @@ class _FileExploreScreenState extends State<FileExploreScreen> {
                                 context,
                                 MaterialPageRoute(
                                   builder:
-                                      (_) => AudioInfo(
+                                      (_) => 
+                                      AudioInfo(
                                         audioFile: AudioFileEntity(
                                           guid: audio.guid,
                                           fileName: audio.fileName,
@@ -160,6 +159,17 @@ class _FileExploreScreenState extends State<FileExploreScreen> {
                                           type: audio.type,
                                         ),
                                       ),
+                                      //          AudioInfo(
+                                      //   audioFile: AudioTranscription(
+                                      //     guid: audio.guid,
+                                      //     fileName: audio.fileName,
+                                      //     receivedAt: audio.receivedAt,
+                                      //     convertedAt: audio.convertedAt,
+                                      //     transcription: audio.transcription,
+                                      //     folderPath: audio.folderPath,
+                                      //     type: audio.type, status: '', srtSegments: [],
+                                      //   ),
+                                      // ),
                                 ),
                               );
                             },
@@ -196,18 +206,17 @@ class _FileExploreScreenState extends State<FileExploreScreen> {
                                             ),
                                           ),
                                           const SizedBox(height: 8),
-                                        Text(
-  audio.transcription.isNotEmpty
-      ? audio.transcription
-      : "No transcription available",
-  style: TextStyle(
-    fontSize: 14,
-    color: Colors.grey[700],
-  ),
-  maxLines: 2,  // Limit text to two lines
-  overflow: TextOverflow.ellipsis,  // Add ellipsis at the end if the text overflows
-)
-
+                                          Text(
+                                            audio.transcription.isNotEmpty
+                                                ? audio.transcription
+                                                : "No transcription available",
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              color: Colors.grey[700],
+                                            ),
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
                                         ],
                                       ),
                                     ),
