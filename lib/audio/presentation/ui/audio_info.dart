@@ -1,132 +1,3 @@
-// import 'package:audioplayers/audioplayers.dart';
-// import 'package:flutter/material.dart';
-// import 'package:test_widget/audio/data/entity/audio_file_entity.dart';
-// import 'package:test_widget/audio/presentation/ui/network_wave_form.dart';
-
-// class AudioInfo extends StatefulWidget {
-//   final AudioFileEntity audioFile;
-
-//   const AudioInfo({
-//     required this.audioFile,
-//     super.key,
-//   });
-
-//   @override
-//   _AudioInfoState createState() => _AudioInfoState();
-// }
-
-// class _AudioInfoState extends State<AudioInfo> {
-//   String _fullTranscription = "";
-//   String _matchedSentence = "";
-
-//   void _updateTranscription(String highlightedTranscription) {
-// final regex = RegExp(r'\*\*(.+?)\*\*');
-
-//     final match = regex.firstMatch(highlightedTranscription);
-    
-//     setState(() {
-//       _fullTranscription = highlightedTranscription.replaceAll('**', '');
-//       _matchedSentence = match?.group(1) ?? "";
-//     });
-//   }
-
-//   @override
-//   void initState() {
-//     super.initState();
-//     _fullTranscription = widget.audioFile.transcription;
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: Text(widget.audioFile.fileName),
-//         backgroundColor: const Color(0xFF87EDED),
-//         actions: [
-//           IconButton(
-//             onPressed: () => Navigator.pop(context),
-//             icon: const Icon(Icons.close_sharp),
-//           )
-//         ],
-//       ),
-//       body: SafeArea(
-//         child: Column(
-//           children: [
-//             const SizedBox(height: 10),
-//             const SizedBox(height: 30),
-//             WavedAudioPlayer(
-//               source: AssetSource(widget.audioFile.folderPath),
-//               iconColor: Colors.red,
-//               playedColor: const Color.fromARGB(255, 255, 0, 0),
-//               unplayedColor: const Color.fromARGB(255, 0, 0, 0),
-//               barWidth: 2,
-//               buttonSize: 40,
-//               showTiming: true,
-//               onError: (error) {
-//                 print('Error occurred: $error.message');
-//               },
-//               onTranscriptionReceived: _updateTranscription,
-//             ),
-//             const SizedBox(height: 50),
-//             Expanded(
-//               child: SingleChildScrollView(
-//                 padding: const EdgeInsets.all(16.0),
-//                 child: _buildHighlightedText(),
-//               ),
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-
-// Widget _buildHighlightedText() {
-//   const commonStyle = TextStyle(
-//     fontSize: 16,
-//     color: Colors.black,
-//     fontWeight: FontWeight.normal, 
-//     height: 1.5,
-//     letterSpacing: 1.2,
-//     wordSpacing: 0.0,
-//   );
-
-//   if (_matchedSentence.isEmpty) {
-//     return Text(_fullTranscription, style: commonStyle);
-//   }
-
-//   final textSpans = <TextSpan>[];
-//   final parts = _fullTranscription.split(_matchedSentence);
-
-//   for (int i = 0; i < parts.length; i++) {
-//     if (parts[i].isNotEmpty) {
-//       textSpans.add(TextSpan(
-//         text: parts[i],
-//         style: commonStyle,
-//       ));
-//     }
-
-//     if (i < parts.length - 1) {
-//       textSpans.add(TextSpan(
-//         text: _matchedSentence,
-//         style: commonStyle.copyWith(
-//           backgroundColor: Colors.yellow.shade100,
-//         ),
-//       ));
-//     }
-//   }
-
-//   return RichText(
-//     text: TextSpan(
-//       children: textSpans,
-//       style: commonStyle,
-//     ),
-//   );
-// }
-
-// }
-
-
-
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/gestures.dart';
@@ -226,20 +97,21 @@ class _AudioInfoState extends State<AudioInfo> {
           children: [
             const SizedBox(height: 10),
             const SizedBox(height: 30),
-            WavedAudioPlayer(
-              key: _waveformKey,
-              source: AssetSource(widget.audioFile.folderPath),
-              iconColor: Colors.red,
-              playedColor: const Color.fromARGB(255, 255, 0, 0),
-              unplayedColor: const Color.fromARGB(255, 0, 0, 0),
-              barWidth: 2,
-              buttonSize: 40,
-              showTiming: true,
-              onError: (error) {
-                print('Error occurred: $error.message');
-              },
-              onTranscriptionReceived: _updateTranscription,
-            ),
+          WavedAudioPlayer(
+                key: _waveformKey,
+                source: AssetSource(widget.audioFile.folderPath),
+                iconColor: Colors.red,
+                playedColor: const Color.fromARGB(255, 255, 0, 0),
+                unplayedColor: const Color.fromARGB(255, 0, 0, 0),
+                barWidth: 2,
+                buttonSize: 40,
+                showTiming: true,
+                onError: (error) {
+                  print('Error occurred: $error.message');
+                },
+                onTranscriptionReceived: _updateTranscription,
+              ),
+            
             const SizedBox(height: 50),
             Expanded(
               child: SingleChildScrollView(
@@ -273,7 +145,6 @@ Widget _buildHighlightedText() {
     final matchIndex = text.indexOf(phrase, currentIndex);
 
     if (matchIndex != -1) {
-      // Add normal text before match
       if (matchIndex > currentIndex) {
         textSpans.add(TextSpan(
           text: text.substring(currentIndex, matchIndex),
@@ -316,7 +187,6 @@ Widget _buildHighlightedText() {
     }
   }
 
-  // Add any remaining normal text after the last matched segment
   if (currentIndex < text.length) {
     textSpans.add(TextSpan(
       text: text.substring(currentIndex),
@@ -328,77 +198,4 @@ Widget _buildHighlightedText() {
     text: TextSpan(children: textSpans),
   );
 }
-
-
-
-
-
-//   Widget _buildHighlightedText() {
-//   const commonStyle = TextStyle(
-//     fontSize: 16,
-//     color: Colors.black,
-//     fontWeight: FontWeight.normal, 
-//     height: 1.5,
-//     letterSpacing: 1.2,
-//     wordSpacing: 0.0,
-//   );
-
-//   final textSpans = <TextSpan>[];
-
-//   final matchStartIndex = _fullTranscription.indexOf(_matchedSentence);
-//   final matchEndIndex = matchStartIndex + _matchedSentence.length;
-
-//   if (matchStartIndex == -1) {
-//     // No match found, return full unhighlighted text
-//     return Text(_fullTranscription, style: commonStyle);
-//   }
-
-//   // Split into three parts: before, matched, and after
-//   final beforeMatch = _fullTranscription.substring(0, matchStartIndex);
-//   final matched = _fullTranscription.substring(matchStartIndex, matchEndIndex);
-//   final afterMatch = _fullTranscription.substring(matchEndIndex);
-
-//   textSpans.add(TextSpan(
-//     text: beforeMatch,
-//     style: commonStyle,
-//   ));
-
-//   textSpans.add(TextSpan(
-//     text: matched,
-//     style: commonStyle.copyWith(
-//       backgroundColor: Colors.yellow.shade100,
-//     ),
-//     recognizer: TapGestureRecognizer()
-//       ..onTap = () {
-//         final transcription = _waveformKey.currentState?.segments;
-//         if (transcription != null) {
-//           for (var segment in transcription) {
-//             if (segment.transcriptText.contains(_matchedSentence)) {
-//               final startTime = _parseDuration(segment.startTime);
-//               final totalDuration = _waveformKey.currentState?.duration ?? Duration.zero;
-
-//               if (totalDuration != Duration.zero) {
-//                 final position = (startTime.inMilliseconds / totalDuration.inMilliseconds) * 100;
-//                 _waveformKey.currentState?.seekToPosition(position);
-//                 _waveformKey.currentState?.setSelectedSegment(segment);
-//               }
-//               break;
-//             }
-//           }
-//         }
-//       },
-//   ));
-
-//   textSpans.add(TextSpan(
-//     text: afterMatch,
-//     style: commonStyle,
-//   ));
-
-//   return RichText(
-//     text: TextSpan(
-//       children: textSpans,
-//       style: commonStyle,
-//     ),
-//   );
-// }
 }

@@ -181,182 +181,86 @@ Future<AudioTranscription> getAudioTranscriptionByGuidDemo(String fguid) async {
 
   return AudioTranscription(
     guid: fguid,
-    fileName: "Rev.mp3",
+    fileName: "Bindu_KK_Treatment.mp3",
     receivedAt: DateTime.parse("2025-04-22T16:17:25.564035Z"),
     convertedAt: DateTime.parse("2025-04-22T16:18:18.669669Z"),
-    transcription: "General Hospital Discharge Creation and hospital details Question name John D. Data board 12th June 1952, 73 years old Medical record number NRM 123456 Date of admission time January 2025 Date of discharge 15th January 2025 Hospital name and what City General Hospital Hospitality Unit Attending physician Dr. James Patterson Primary care provider Dr. Sara Mitchell and Dr. Edward Saad family clinic Diagnosis and clinical purpose Admission diagnosis Community acute pneumonia requiring oxygen therapy Discharge diagnosis Resorder pneumonia in good oxygen on home air Secondary diagnosis Hypertension Type 2 Diabetics Traumatic picnic disease stage 3 Hospital and stage summary Consultation Infectious disease for antibiotic selection and duration guidance Polymerally for persistent hypoxia and weaning procedure Procedure number History of person illness 70 years old male person with worsening dyspnea productive cough and fever Just extra shower, night, lower blood, consolidation consistent with pneumonia Embryic treatment started with IV, Cif-Triaxone and Aziromazole Required supplement of oxygen at 2 LNC Brief hospital close",
-    folderPath: "G:\\dotnet learning\\AudioToText\\AudioToText.API\\Audio\\completed\\Rev.mp3",
+    transcription: "Treatment Certificate of Mrs. Bindu KK, Hospital ID 6266666. "
+        "Mrs. to certify that, Mrs. Bindu KK, 49-year-old lady with Hospital ID 6266666, "
+        "is a case of castor my left breast, locally advanced. "
+        "She is on ERPR negative and ERPR positive and HER2 new 3+. "
+        "She is on neurogenic chemotherapy with TCH, that is docetaxel carboplatin with trastasmab. "
+        "She is planned for surgery after six cycles. And radiation. "
+        "He is planned for adjuvant trastasmab for a total of one year. "
+        "The estimated treatment cost is approximately 9 to 10 lakhs. "
+        "Kindly do the needful. Thank you. Thank you.",
+    folderPath: "G:\\dotnet learning\\AudioToText\\AudioToText.API\\Audio\\completed\\Bindu_KK_Treatment.mp3",
     type: null,
     status: "Completed",
     srtSegments: [
       TranscriptionSegment(
         startTime: "00:00:00",
-        endTime: "00:00:03",
-        transcriptText: "General Hospital Discharge",
+        endTime: "00:00:08",
+        transcriptText: "Treatment Certificate of Mrs. Bindu KK, Hospital ID 6266666.",
       ),
       TranscriptionSegment(
-        startTime: "00:00:03",
-        endTime: "00:00:06",
-        transcriptText: "Creation and hospital details",
+        startTime: "00:00:09",
+        endTime: "00:00:18",
+        transcriptText: "Mrs. to certify that, Mrs. Bindu KK, 49-year-old lady with Hospital ID 6266666,",
       ),
       TranscriptionSegment(
-        startTime: "00:00:06",
-        endTime: "00:00:07",
-        transcriptText: "Question name John D.",
-      ),
-      TranscriptionSegment(
-        startTime: "00:00:07",
-        endTime: "00:00:10",
-        transcriptText: "Data board 12th June 1952, 73 years old",
-      ),
-      TranscriptionSegment(
-        startTime: "00:00:10",
-        endTime: "00:00:13",
-        transcriptText: "Medical record number NRM 123456",
-      ),
-      TranscriptionSegment(
-        startTime: "00:00:13",
-        endTime: "00:00:17",
-        transcriptText: "Date of admission time January 2025",
-      ),
-      TranscriptionSegment(
-        startTime: "00:00:17",
-        endTime: "00:00:20",
-        transcriptText: "Date of discharge 15th January 2025",
-      ),
-      TranscriptionSegment(
-        startTime: "00:00:20",
-        endTime: "00:00:22",
-        transcriptText: "Hospital name and what",
-      ),
-      TranscriptionSegment(
-        startTime: "00:00:22",
+        startTime: "00:00:19",
         endTime: "00:00:23",
-        transcriptText: "City General Hospital",
+        transcriptText: "is a case of castor my left breast, locally advanced.",
       ),
       TranscriptionSegment(
         startTime: "00:00:23",
-        endTime: "00:00:25",
-        transcriptText: "Hospitality Unit",
-      ),
-      TranscriptionSegment(
-        startTime: "00:00:25",
-        endTime: "00:00:28",
-        transcriptText: "Attending physician Dr. James Patterson",
-      ),
-      TranscriptionSegment(
-        startTime: "00:00:28",
-        endTime: "00:00:31",
-        transcriptText: "Primary care provider Dr. Sara Mitchell",
-      ),
-      TranscriptionSegment(
-        startTime: "00:00:31",
-        endTime: "00:00:34",
-        transcriptText: "and Dr. Edward Saad family clinic",
-      ),
-      TranscriptionSegment(
-        startTime: "00:00:34",
-        endTime: "00:00:37",
-        transcriptText: "Diagnosis and clinical purpose",
-      ),
-      TranscriptionSegment(
-        startTime: "00:00:37",
-        endTime: "00:00:38",
-        transcriptText: "Admission diagnosis",
-      ),
-      TranscriptionSegment(
-        startTime: "00:00:38",
         endTime: "00:00:41",
-        transcriptText: "Community acute pneumonia requiring oxygen therapy",
+        transcriptText: "She is on ERPR negative and ERPR positive and HER2 new 3+.",
       ),
       TranscriptionSegment(
         startTime: "00:00:41",
-        endTime: "00:00:42",
-        transcriptText: "Discharge diagnosis",
-      ),
-      TranscriptionSegment(
-        startTime: "00:00:42",
-        endTime: "00:00:47",
-        transcriptText: "Resorder pneumonia in good oxygen on home air",
-      ),
-      TranscriptionSegment(
-        startTime: "00:00:47",
-        endTime: "00:00:48",
-        transcriptText: "Secondary diagnosis",
-      ),
-      TranscriptionSegment(
-        startTime: "00:00:48",
         endTime: "00:00:49",
-        transcriptText: "Hypertension",
+        transcriptText: "She is on neurogenic chemotherapy with TCH, that is docetaxel carboplatin with trastasmab.",
       ),
       TranscriptionSegment(
         startTime: "00:00:49",
-        endTime: "00:00:50",
-        transcriptText: "Type 2 Diabetics",
-      ),
-      TranscriptionSegment(
-        startTime: "00:00:50",
         endTime: "00:00:53",
-        transcriptText: "Traumatic picnic disease stage 3",
+        transcriptText: "She is planned for surgery after six cycles.",
       ),
       TranscriptionSegment(
         startTime: "00:00:53",
         endTime: "00:00:55",
-        transcriptText: "Hospital and stage summary",
-      ),
-      TranscriptionSegment(
-        startTime: "00:00:55",
-        endTime: "00:00:56",
-        transcriptText: "Consultation",
+        transcriptText: "And radiation.",
       ),
       TranscriptionSegment(
         startTime: "00:00:56",
         endTime: "00:01:02",
-        transcriptText: "Infectious disease for antibiotic selection and duration guidance",
+        transcriptText: "He is planned for adjuvant trastasmab for a total of one year.",
       ),
       TranscriptionSegment(
-        startTime: "00:01:02",
-        endTime: "00:01:08",
-        transcriptText: "Polymerally for persistent hypoxia and weaning procedure",
-      ),
-      TranscriptionSegment(
-        startTime: "00:01:08",
+        startTime: "00:01:03",
         endTime: "00:01:09",
-        transcriptText: "Procedure number",
+        transcriptText: "The estimated treatment cost is approximately 9 to 10 lakhs.",
       ),
       TranscriptionSegment(
         startTime: "00:01:09",
-        endTime: "00:01:12",
-        transcriptText: "History of person illness",
+        endTime: "00:01:10",
+        transcriptText: "Kindly do the needful.",
       ),
       TranscriptionSegment(
-        startTime: "00:01:12",
-        endTime: "00:01:20",
-        transcriptText: "70 years old male person with worsening dyspnea productive cough and fever",
+        startTime: "00:01:11",
+        endTime: "00:01:11",
+        transcriptText: "Thank you.",
       ),
       TranscriptionSegment(
-        startTime: "00:01:20",
-        endTime: "00:01:27",
-        transcriptText: "Just extra shower, night, lower blood, consolidation consistent with pneumonia",
-      ),
-      TranscriptionSegment(
-        startTime: "00:01:27",
-        endTime: "00:01:33",
-        transcriptText: "Embryic treatment started with IV, Cif-Triaxone and Aziromazole",
-      ),
-      TranscriptionSegment(
-        startTime: "00:01:33",
-        endTime: "00:01:37",
-        transcriptText: "Required supplement of oxygen at 2 LNC",
-      ),
-      TranscriptionSegment(
-        startTime: "00:01:37",
-        endTime: "00:01:39",
-        transcriptText: "Brief hospital close",
+        startTime: "00:01:11",
+        endTime: "00:01:13",
+        transcriptText: "Thank you.",
       ),
     ],
   );
 }
+
 
 
 
@@ -372,16 +276,16 @@ Future<List<AudioFileEntity>> getAudioFolders() async {
       guid: "003",
       fileName: "subfolder_audio_01.mp3",
       transcription: "General Hospital Discharge Creation and hospital details Question name John D. Data board 12th June 1952, 73 years old Medical record number NRM 123456 Date of admission time January 2025 Date of discharge 15th January 2025 Hospital name and what City General Hospital Hospitality Unit Attending physician Dr. James Patterson Primary care provider Dr. Sara Mitchell and Dr. Edward Saad family, clinic Diagnosis and clinical purpose Admission diagnosis Community acute pneumonia requirin oxygen therapy Discharge diagnosis Resorder pneumonia in good oxygen on home air Secondary diagnosisHypertension Type 2 Diabetics Traumatic picnic disease stage 3 Hospital and stage summary Consultation Infectious disease for antibiotic selection and duration guidance Polymerally for persistent hypoxia and weaning procedure Procedure number History of person illness 70 years old male person with worsening dyspnea productive cough and fever Just extra shower, night, lower blood, consolidation consistent with pneumonia Embryic treatment started with IV, Cif-Triaxone and Aziromazole Required supplement of oxygen at 2 LNC Brief hospital close",
-      folderPath: "assets/ll.mp3",
+      folderPath: "assets/iiii.mp3",
       receivedAt: DateTime.now().subtract(const Duration(days: 1)),
       convertedAt: DateTime.now(),
       type: "audio/mpeg",
     ),
     AudioFileEntity(
       guid: "004",
-      fileName: "subfolder_audio_02.mp3",
+      fileName: "assets/1_11314.wav",
       transcription: "Second audio transcription.",
-      folderPath: "assets/hi.mp3",
+      folderPath: "assets/1_11314.wav",
       receivedAt: DateTime.now().subtract(const Duration(days: 3)),
       convertedAt: DateTime.now().subtract(const Duration(days: 1)),
       type: "audio/mpeg",
@@ -410,7 +314,7 @@ Future<List<AudioFileEntity>> getAudioFilesBySubFolder() async {
       guid: "003",
       fileName: "subfolder_audio_01.mp3",
       transcription: "General Hospital Discharge Creation and hospital details Question name John D. Data board 12th June 1952, 73 years old Medical record number NRM 123456 Date of admission time January 2025 Date of discharge 15th January 2025 Hospital name and what City General Hospital Hospitality Unit Attending physician Dr. James Patterson Primary care provider Dr. Sara Mitchell and Dr. Edward Saad family, clinic Diagnosis and clinical purpose Admission diagnosis Community acute pneumonia requirin oxygen therapy Discharge diagnosis Resorder pneumonia in good oxygen on home air Secondary diagnosisHypertension Type 2 Diabetics Traumatic picnic disease stage 3 Hospital and stage summary Consultation Infectious disease for antibiotic selection and duration guidance Polymerally for persistent hypoxia and weaning procedure Procedure number History of person illness 70 years old male person with worsening dyspnea productive cough and fever Just extra shower, night, lower blood, consolidation consistent with pneumonia Embryic treatment started with IV, Cif-Triaxone and Aziromazole Required supplement of oxygen at 2 LNC Brief hospital close",
-      folderPath: "assets/ll.mp3",
+      folderPath: "assets/iiii.mp3",
       receivedAt: DateTime.now().subtract(const Duration(days: 1)),
       convertedAt: DateTime.now(),
       type: "audio/mpeg",
@@ -418,8 +322,16 @@ Future<List<AudioFileEntity>> getAudioFilesBySubFolder() async {
     AudioFileEntity(
       guid: "004",
       fileName: "subfolder_audio_02.mp3",
-      transcription: "Second audio transcription.",
-      folderPath: "assets/hi.mp3",
+      transcription: "Treatment Certificate of Mrs. Bindu KK, Hospital ID 6266666. "
+        "Mrs. to certify that, Mrs. Bindu KK, 49-year-old lady with Hospital ID 6266666, "
+        "is a case of castor my left breast, locally advanced. "
+        "She is on ERPR negative and ERPR positive and HER2 new 3+. "
+        "She is on neurogenic chemotherapy with TCH, that is docetaxel carboplatin with trastasmab. "
+        "She is planned for surgery after six cycles. And radiation. "
+        "He is planned for adjuvant trastasmab for a total of one year. "
+        "The estimated treatment cost is approximately 9 to 10 lakhs. "
+        "Kindly do the needful. Thank you. Thank you.",
+      folderPath: "assets/1_11314.wav",
       receivedAt: DateTime.now().subtract(const Duration(days: 3)),
       convertedAt: DateTime.now().subtract(const Duration(days: 1)),
       type: "audio/mpeg",

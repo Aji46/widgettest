@@ -134,15 +134,6 @@ class _FileExploreScreenState extends State<FileExploreScreen> {
                           final audio = audioFiles[index];
                           return GestureDetector(
                             onTap: () {
-                              // Navigator.push(
-                              //   context,
-                              //   MaterialPageRoute(
-                              //     builder: (_) => FileItem(filename: audio.fileName, receivedTime: audio.receivedAt, convertedTime: audio.convertedAt, transcriptText: audio.transcription,),
-                              //   ),
-                              // );
-
-                              // Example usage: in your previous page
-
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -158,18 +149,7 @@ class _FileExploreScreenState extends State<FileExploreScreen> {
                                           folderPath: audio.folderPath,
                                           type: audio.type,
                                         ),
-                                      ),
-                                      //          AudioInfo(
-                                      //   audioFile: AudioTranscription(
-                                      //     guid: audio.guid,
-                                      //     fileName: audio.fileName,
-                                      //     receivedAt: audio.receivedAt,
-                                      //     convertedAt: audio.convertedAt,
-                                      //     transcription: audio.transcription,
-                                      //     folderPath: audio.folderPath,
-                                      //     type: audio.type, status: '', srtSegments: [],
-                                      //   ),
-                                      // ),
+                                      )
                                 ),
                               );
                             },

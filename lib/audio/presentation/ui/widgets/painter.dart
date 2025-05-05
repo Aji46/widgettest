@@ -326,16 +326,36 @@ class WaveformPainter extends CustomPainter {
       );
     }
 
-    // Draw waveform
-    double barSpacing = 4;  // Adjust if needed
-    for (int i = 0; i < waveformData.length; i++) {
-      double x = i * (barWidth + barSpacing);
-      double height = waveformData[i] * size.height;
-      double y = (size.height - height) / 2;
+// Draw waveform
+// Draw waveform with responsive but constrained bar sizes
+final double availableWidth = size.width;
+final int barCount = waveformData.length;
 
-      final paint = i / waveformData.length < progress ? playedPaint : unplayedPaint;
-      canvas.drawRect(Rect.fromLTWH(x, y, barWidth, height), paint);
-    }
+// Define min/max bar dimensions
+const double minBarWidth = 2.0;
+const double maxBarWidth = 2.0;
+const double minBarSpacing = 2.0;
+const double maxBarSpacing = 6.0;
+
+// Calculate optimal bar width and spacing
+double barWidth = (availableWidth / barCount) - minBarSpacing;
+barWidth = barWidth.clamp(minBarWidth, maxBarWidth);
+
+double barSpacing = (availableWidth - (barWidth * barCount)) / (barCount - 1);
+barSpacing = barSpacing.clamp(minBarSpacing, maxBarSpacing);
+
+// Center the waveform if there's extra space
+final double totalWidth = (barWidth * barCount) + (barSpacing * (barCount - 1));
+final double startX = (availableWidth - totalWidth) / 2;
+
+for (int i = 0; i < barCount; i++) {
+  double x = startX + i * (barWidth + barSpacing);
+  double height = waveformData[i] * size.height;
+  double y = (size.height - height) / 2;
+
+  final paint = i / barCount < progress ? playedPaint : unplayedPaint;
+  canvas.drawRect(Rect.fromLTWH(x, y, barWidth, height), paint);
+}
 
     // Draw green lines for transcription segments and show start and end times at the bottom
     TextPainter textPainter = TextPainter(
@@ -350,33 +370,33 @@ class WaveformPainter extends CustomPainter {
     );
 
     for (var segment in transcriptionSegments) {
-      Duration start = _parseDuration(segment.startTime);
+      // Duration start = _parseDuration(segment.startTime);
       Duration end = _parseDuration(segment.endTime);
 
-      double startPosition = (start.inMilliseconds / audioDuration.inMilliseconds) * waveWidth;
+      // double startPosition = (start.inMilliseconds / audioDuration.inMilliseconds) * waveWidth;
       double endPosition = (end.inMilliseconds / audioDuration.inMilliseconds) * waveWidth;
 
       // Draw green lines at the start and end times of the segment
      // Increased height of green lines
-      canvas.drawLine(
-        Offset(startPosition, 0),
-        Offset(startPosition, size.height - greenLineHeight), 
-        greenLinePaint
-      );
+      // canvas.drawLine(
+      //   Offset(startPosition, 0),
+      //   Offset(startPosition, size.height - greenLineHeight), 
+      //   greenLinePaint
+      // );
 
       canvas.drawLine(
-        Offset(endPosition, 0),
+        Offset(endPosition, size.height - greenLineHeight),
         Offset(endPosition, greenLineHeight), 
         greenLinePaint
       );
 
       // Draw the start time text at the bottom of the green line
-      textPainter.text = TextSpan(
-        text: _formatDuration(start),
-        style: textStyle,
-      );
-      textPainter.layout();
-      textPainter.paint(canvas, Offset(startPosition - textPainter.width / 2, greenLineHeight));
+      // textPainter.text = TextSpan(
+      //   text: _formatDuration(start),
+      //   style: textStyle,
+      // );
+      // textPainter.layout();
+      // textPainter.paint(canvas, Offset(startPosition - textPainter.width / 2, greenLineHeight));
 
       // Draw the end time text at the bottom of the green line
       textPainter.text = TextSpan(
@@ -414,7 +434,8 @@ class WaveformPainter extends CustomPainter {
     int hours = minutes ~/ 60;
     minutes = minutes % 60;
 
-    return '${_twoDigitFormat(hours)}:${_twoDigitFormat(minutes)}:${_twoDigitFormat(seconds)}';
+    // return '${_twoDigitFormat(hours)}:${_twoDigitFormat(minutes)}:${_twoDigitFormat(seconds)}';
+     return '${_twoDigitFormat(minutes)}:${_twoDigitFormat(seconds)}';
   }
 
   // Helper method to format numbers with two digits
